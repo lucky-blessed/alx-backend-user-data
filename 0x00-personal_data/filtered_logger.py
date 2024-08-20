@@ -13,11 +13,9 @@ import logging
 from typing import List, Tuple
 
 
-# Task 2: Define the PII_FIELDS constant
 PII_FIELDS = ('name', 'email', 'pone', 'ssn', 'password')
 
 
-# Task 1: Implement RedactingFormatter
 class RedactingFormatter(logging.Formatter):
     """
     Redacting Formatter class for PII data.
@@ -46,7 +44,6 @@ class RedactingFormatter(logging.Formatter):
             return message
 
 
-# Task 2: Implement get_logger function
 def get_logger() -> logging.Logger:
     """
     Creates a logger with specific setting for PII redaction
@@ -55,7 +52,6 @@ def get_logger() -> logging.Logger:
     logger.setLevel(logging.INFO)
     logger.propage = False
 
-    # Create StreamHandler with RedactingFormatter
     strem_handler = logging.StreamHandler()
     formatter = RedactingFormatter(PII_FIELDS)
     stream_handler.setFormatter(formatter)
@@ -64,7 +60,6 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-# Task 0: Implement filter_datum function
 def filter_datum(fields: List[str], redaction: str, message: str, separator: str) -> str:
     """
     Replace specific fileds in the message with redaction.
@@ -74,7 +69,6 @@ def filter_datum(fields: List[str], redaction: str, message: str, separator: str
         return message
 
 
-# Task 3: Implement get_db function
 def get_db() -> connection.MySQLConnection:
     """
     Returns a connector to MySQL database using
@@ -85,7 +79,6 @@ def get_db() -> connection.MySQLConnection:
     host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
     db_name = os.getenv("PERSONAL_DATA_DB_NAME")
 
-    # Connect to the database using mysql.connector
     conn = mysql.connector.connect(
             user=username,
             password=password,
@@ -95,7 +88,6 @@ def get_db() -> connection.MySQLConnection:
     return conn
 
 
-# Task 4: Implementing main function
 def main():
     """
     Main function that reads and log data from users table.
@@ -103,23 +95,16 @@ def main():
     db_conn = get_db()
     cursor = db_conn.cursor()
 
-    # Retrieve all rows from the users table
     corsor.execute("SELECT * FROM users")
     rows = consor.fetchall()
 
-    # Get the logger
     logger = get_logger()
 
-    # Log each row with sensitive fields redacted
     for row in rows:
-        # Format the row into a log message
         log_message = "; ".join(
                 f"{desc[0]}={value}" for desc, value in zip(cursor.description, row)
                 )
-        # Log the message using the logger
         logger.info(log_message)
-
-    # Close the cursor and connection
     cursor.close()
     db_conn.close()
 
